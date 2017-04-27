@@ -51,7 +51,7 @@
 
         href="https://github.com/mycozycloud/request-json/"
 
-    >request-json (v0.6.1)</a>
+    >request-json (v0.6.2)</a>
 </h1>
 <h4>HTTP request client for JSON APIs</h4>
 <div class="apidocSectionDiv"><a
@@ -91,12 +91,6 @@
         <li>
 
             <span class="apidocSignatureSpan">object <span class="apidocSignatureSpan">request-json.</span>JsonClient.prototype</span>
-
-        </li>
-
-        <li>
-
-            <span class="apidocSignatureSpan">object <span class="apidocSignatureSpan">request-json.</span>main</span>
 
         </li>
 
@@ -202,7 +196,7 @@
 
             <a class="apidocElementLiA" href="#apidoc.element.request-json.JsonClient.prototype.putFile">
             function <span class="apidocSignatureSpan">request-json.JsonClient.prototype.</span>putFile
-            <span class="apidocSignatureSpan">(path, file, data, callback)</span>
+            <span class="apidocSignatureSpan">(path, file, data, callback, parse)</span>
             </a>
 
         </li>
@@ -229,7 +223,7 @@
 
             <a class="apidocElementLiA" href="#apidoc.element.request-json.JsonClient.prototype.sendFile">
             function <span class="apidocSignatureSpan">request-json.JsonClient.prototype.</span>sendFile
-            <span class="apidocSignatureSpan">(path, files, data, callback)</span>
+            <span class="apidocSignatureSpan">(path, files, data, callback, parse)</span>
             </a>
 
         </li>
@@ -266,37 +260,6 @@
             <a class="apidocElementLiA" href="#apidoc.element.request-json.JsonClient.prototype.setToken">
             function <span class="apidocSignatureSpan">request-json.JsonClient.prototype.</span>setToken
             <span class="apidocSignatureSpan">(token)</span>
-            </a>
-
-        </li>
-
-    </ol></li>
-
-    <li class="apidocModuleLi"><a href="#apidoc.module.request-json.main">module request-json.main</a><ol>
-
-        <li>
-
-            <a class="apidocElementLiA" href="#apidoc.element.request-json.main.JsonClient">
-            function <span class="apidocSignatureSpan">request-json.main.</span>JsonClient
-            <span class="apidocSignatureSpan">(host1, options1)</span>
-            </a>
-
-        </li>
-
-        <li>
-
-            <a class="apidocElementLiA" href="#apidoc.element.request-json.main.createClient">
-            function <span class="apidocSignatureSpan">request-json.main.</span>createClient
-            <span class="apidocSignatureSpan">(url, options)</span>
-            </a>
-
-        </li>
-
-        <li>
-
-            <a class="apidocElementLiA" href="#apidoc.element.request-json.main.newClient">
-            function <span class="apidocSignatureSpan">request-json.main.</span>newClient
-            <span class="apidocSignatureSpan">(url, options)</span>
             </a>
 
         </li>
@@ -359,21 +322,21 @@ deprecate(&#x22;newClient() is deprecated, please use createClient()&#x22;);
   return new requestJson.JsonClient(url, options);
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
-[![Build
-Status](https://travis-ci.org/cozy/request-json.png?branch=master)](https://travis-ci.org/cozy/request-json)
-
-## How it works
-
-```javascript
-request = require(&#x27;request-json&#x27;);
-var client = request.<span class="apidocCodeKeywordSpan">createClient</span>(&#x27;http://localhost:8888/&#x27;);
-
-var data = {
-title: &#x27;my title&#x27;,
-content: &#x27;my content&#x27;
 };
-client.post(&#x27;posts/&#x27;, data, function(err, res, body) {
-return console.log(res.statusCode);
+
+requestJson.newClient = function(url, options) {
+if (options == null) {
+  options = {};
+}
+deprecate(&#x22;newClient() is deprecated, please use createClient()&#x22;);
+return requestJson.<span class="apidocCodeKeywordSpan">createClient</span>(url, options);
+};
+
+helpers = {
+merge: function(obj1, obj2) {
+  var key, result;
+  result = {};
+  for (key in obj1) {
 ...</pre></li>
     </ul>
 
@@ -395,8 +358,6 @@ return console.log(res.statusCode);
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">n/a</pre></li>
     </ul>
-
-
 
 
 
@@ -459,24 +420,24 @@ deprecate(&#x22;newClient() is deprecated, please use createClient()&#x22;);
   if (parse == null) {
     parse = true;
   }
-  return this.handleRequest(&#x27;DELETE&#x27;, path, null, options, callback);
+  return this.handleRequest(&#x27;DELETE&#x27;, path, null, options, callback, parse);
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
-data = {
-  title: &#x27;my new title&#x27;
+  return this.handleRequest(&#x27;DELETE&#x27;, path, null, options, callback, parse);
 };
-client.put(&#x27;posts/123/&#x27;, data, function(err, res, body) {
-  return console.log(res.statusCode);
-});
 
-client.<span class="apidocCodeKeywordSpan">del</span>(&#x27;posts/123/&#x27;, function(err, res, body) {
-  return console.log(res.statusCode);
-});
-
-data = {
-  title: &#x27;my patched title&#x27;
+JsonClient.prototype[&#x22;delete&#x22;] = function(path, options, callback, parse) {
+  if (parse == null) {
+    parse = true;
+  }
+  return this.<span class="apidocCodeKeywordSpan">del</span>(path, options, callback, parse);
 };
-client.patch(&#x27;posts/123/&#x27;, data, function(err, res, body) {
+
+JsonClient.prototype.sendFile = function(path, files, data, callback, parse) {
+  var att, file, form, i, index, len, req, results;
+  if (parse == null) {
+    parse = false;
+  }
 ...</pre></li>
     </ul>
 
@@ -514,21 +475,20 @@ client.patch(&#x27;posts/123/&#x27;, data, function(err, res, body) {
   return this.handleRequest(&#x27;GET&#x27;, path, null, options, callback);
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
-  title: &#x27;my title&#x27;,
-  content: &#x27;my content&#x27;
+  } else if (!Array.isArray(file)) {
+    return file.pipe(req);
+  }
 };
-client.post(&#x27;posts/&#x27;, data, function(err, res, body) {
-  return console.log(res.statusCode);
-});
 
-client.<span class="apidocCodeKeywordSpan">get</span>(&#x27;posts/&#x27;, function(err, res, body) {
-  return console.log(body.rows[0].title);
-});
-
-data = {
-  title: &#x27;my new title&#x27;
+JsonClient.prototype.saveFile = function(path, filePath, callback) {
+  var stream;
+  stream = this.<span class="apidocCodeKeywordSpan">get</span>(path, callback, false);
+  return stream.pipe(fs.createWriteStream(filePath));
 };
-client.put(&#x27;posts/123/&#x27;, data, function(err, res, body) {
+
+JsonClient.prototype.saveFileAsStream = function(path, callback) {
+  return this.get(path, callback, false);
+};
 ...</pre></li>
     </ul>
 
@@ -667,7 +627,7 @@ if (typeof callback !== &#x27;function&#x27;) {
   if (parse == null) {
     parse = true;
   }
-  return this.handleRequest(&#x27;PATCH&#x27;, path, json, options, callback);
+  return this.handleRequest(&#x27;PATCH&#x27;, path, json, options, callback, parse);
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
 client.del(&#x27;posts/123/&#x27;, function(err, res, body) {
@@ -700,23 +660,24 @@ You still can use `newClient()` though it will throw deprecation message.
   if (parse == null) {
     parse = true;
   }
-  return this.handleRequest(&#x27;POST&#x27;, path, json, options, callback);
+  return this.handleRequest(&#x27;POST&#x27;, path, json, options, callback, parse);
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
-request = require(&#x27;request-json&#x27;);
-var client = request.createClient(&#x27;http://localhost:8888/&#x27;);
-
-var data = {
-  title: &#x27;my title&#x27;,
-  content: &#x27;my content&#x27;
-};
-client.<span class="apidocCodeKeywordSpan">post</span>(&#x27;posts/&#x27;, data, function(err, res, body) {
-  return console.log(res.statusCode);
-});
-
-client.get(&#x27;posts/&#x27;, function(err, res, body) {
-  return console.log(body.rows[0].title);
-});
+if (parse == null) {
+  parse = false;
+}
+if (typeof data === &#x22;function&#x22;) {
+  callback = data;
+  parse = callback;
+}
+req = this.<span class="apidocCodeKeywordSpan">post</span>(path, null, callback, parse);
+form = req.form();
+if (typeof data !== &#x22;function&#x22;) {
+  for (att in data) {
+    form.append(att, data[att]);
+  }
+}
+if (typeof files === &#x22;string&#x22;) {
 ...</pre></li>
     </ul>
 
@@ -733,23 +694,23 @@ client.get(&#x27;posts/&#x27;, function(err, res, body) {
   if (parse == null) {
     parse = true;
   }
-  return this.handleRequest(&#x27;PUT&#x27;, path, json, options, callback);
+  return this.handleRequest(&#x27;PUT&#x27;, path, json, options, callback, parse);
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">...
-client.get(&#x27;posts/&#x27;, function(err, res, body) {
-  return console.log(body.rows[0].title);
-});
-
-data = {
-  title: &#x27;my new title&#x27;
+  if (parse == null) {
+    parse = false;
+  }
+  if (typeof data === &#x22;function&#x22;) {
+    parse = callback || false;
+    callback = data;
+  }
+  req = this.<span class="apidocCodeKeywordSpan">put</span>(path, null, {}, callback, parse);
+  if (typeof file === &#x22;string&#x22;) {
+    return fs.createReadStream(file).pipe(req);
+  } else if (!Array.isArray(file)) {
+    return file.pipe(req);
+  }
 };
-client.<span class="apidocCodeKeywordSpan">put</span>(&#x27;posts/123/&#x27;, data, function(err, res, body) {
-  return console.log(res.statusCode);
-});
-
-client.del(&#x27;posts/123/&#x27;, function(err, res, body) {
-  return console.log(res.statusCode);
-});
 ...</pre></li>
     </ul>
 
@@ -758,16 +719,20 @@ client.del(&#x27;posts/123/&#x27;, function(err, res, body) {
     <h2>
         <a href="#apidoc.element.request-json.JsonClient.prototype.putFile" id="apidoc.element.request-json.JsonClient.prototype.putFile">
         function <span class="apidocSignatureSpan">request-json.JsonClient.prototype.</span>putFile
-        <span class="apidocSignatureSpan">(path, file, data, callback)</span>
+        <span class="apidocSignatureSpan">(path, file, data, callback, parse)</span>
         </a>
     </h2>
     <ul>
-    <li>description and source-code<pre class="apidocCodePre">putFile = function (path, file, data, callback) {
+    <li>description and source-code<pre class="apidocCodePre">putFile = function (path, file, data, callback, parse) {
   var req;
+  if (parse == null) {
+    parse = false;
+  }
   if (typeof data === &#x22;function&#x22;) {
+    parse = callback || false;
     callback = data;
   }
-  req = this.put(path, null, callback, false);
+  req = this.put(path, null, {}, callback, parse);
   if (typeof file === &#x22;string&#x22;) {
     return fs.createReadStream(file).pipe(req);
   } else if (!Array.isArray(file)) {
@@ -830,16 +795,20 @@ client.<span class="apidocCodeKeywordSpan">saveFile</span>(&#x27;attachments/tes
     <h2>
         <a href="#apidoc.element.request-json.JsonClient.prototype.sendFile" id="apidoc.element.request-json.JsonClient.prototype.sendFile">
         function <span class="apidocSignatureSpan">request-json.JsonClient.prototype.</span>sendFile
-        <span class="apidocSignatureSpan">(path, files, data, callback)</span>
+        <span class="apidocSignatureSpan">(path, files, data, callback, parse)</span>
         </a>
     </h2>
     <ul>
-    <li>description and source-code<pre class="apidocCodePre">sendFile = function (path, files, data, callback) {
+    <li>description and source-code<pre class="apidocCodePre">sendFile = function (path, files, data, callback, parse) {
   var att, file, form, i, index, len, req, results;
+  if (parse == null) {
+    parse = false;
+  }
   if (typeof data === &#x22;function&#x22;) {
     callback = data;
+    parse = callback;
   }
-  req = this.post(path, null, callback, false);
+  req = this.post(path, null, callback, parse);
   form = req.form();
   if (typeof data !== &#x22;function&#x22;) {
     for (att in data) {
@@ -966,100 +935,6 @@ client.get(&#x27;private/posts/&#x27;, function(err, res, body) {
     <ul>
     <li>description and source-code<pre class="apidocCodePre">setToken = function (token) {
   return this.headers[&#x22;x-auth-token&#x22;] = token;
-}</pre></li>
-    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
-    </ul>
-
-
-</div>
-
-<div class="apidocSectionDiv">
-<h1><a href="#apidoc.module.request-json.main" id="apidoc.module.request-json.main">module request-json.main</a></h1>
-
-
-    <h2>
-        <a href="#apidoc.element.request-json.main.JsonClient" id="apidoc.element.request-json.main.JsonClient">
-        function <span class="apidocSignatureSpan">request-json.main.</span>JsonClient
-        <span class="apidocSignatureSpan">(host1, options1)</span>
-        </a>
-    </h2>
-    <ul>
-    <li>description and source-code<pre class="apidocCodePre">function JsonClient(host1, options1) {
-  var ref;
-  this.host = host1;
-  this.options = options1 != null ? options1 : {};
-  this.headers = (ref = this.options.headers) != null ? ref : {};
-  this.headers[&#x27;accept&#x27;] = &#x27;application/json&#x27;;
-  this.headers[&#x27;user-agent&#x27;] = &#x22;request-json/1.0&#x22;;
-}</pre></li>
-    <li>example usage<pre class="apidocCodePre">...
-
-requestJson = module.exports;
-
-requestJson.createClient = function(url, options) {
-if (options == null) {
-  options = {};
-}
-return new requestJson.<span class="apidocCodeKeywordSpan">JsonClient</span>(url, options);
-};
-
-requestJson.newClient = function(url, options) {
-if (options == null) {
-  options = {};
-}
-deprecate(&#x22;newClient() is deprecated, please use createClient()&#x22;);
-...</pre></li>
-    </ul>
-
-
-
-    <h2>
-        <a href="#apidoc.element.request-json.main.createClient" id="apidoc.element.request-json.main.createClient">
-        function <span class="apidocSignatureSpan">request-json.main.</span>createClient
-        <span class="apidocSignatureSpan">(url, options)</span>
-        </a>
-    </h2>
-    <ul>
-    <li>description and source-code<pre class="apidocCodePre">createClient = function (url, options) {
-  if (options == null) {
-    options = {};
-  }
-  return new requestJson.JsonClient(url, options);
-}</pre></li>
-    <li>example usage<pre class="apidocCodePre">...
-[![Build
-Status](https://travis-ci.org/cozy/request-json.png?branch=master)](https://travis-ci.org/cozy/request-json)
-
-## How it works
-
-```javascript
-request = require(&#x27;request-json&#x27;);
-var client = request.<span class="apidocCodeKeywordSpan">createClient</span>(&#x27;http://localhost:8888/&#x27;);
-
-var data = {
-title: &#x27;my title&#x27;,
-content: &#x27;my content&#x27;
-};
-client.post(&#x27;posts/&#x27;, data, function(err, res, body) {
-return console.log(res.statusCode);
-...</pre></li>
-    </ul>
-
-
-
-    <h2>
-        <a href="#apidoc.element.request-json.main.newClient" id="apidoc.element.request-json.main.newClient">
-        function <span class="apidocSignatureSpan">request-json.main.</span>newClient
-        <span class="apidocSignatureSpan">(url, options)</span>
-        </a>
-    </h2>
-    <ul>
-    <li>description and source-code<pre class="apidocCodePre">newClient = function (url, options) {
-  if (options == null) {
-    options = {};
-  }
-  deprecate(&#x22;newClient() is deprecated, please use createClient()&#x22;);
-  return requestJson.createClient(url, options);
 }</pre></li>
     <li>example usage<pre class="apidocCodePre">n/a</pre></li>
     </ul>
