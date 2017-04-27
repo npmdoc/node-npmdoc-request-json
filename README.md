@@ -1,6 +1,6 @@
 # npmdoc-request-json
 
-#### api documentation for  [request-json (v0.6.1)](https://github.com/mycozycloud/request-json/)  [![npm package](https://img.shields.io/npm/v/npmdoc-request-json.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-request-json) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-request-json.svg)](https://travis-ci.org/npmdoc/node-npmdoc-request-json)
+#### basic api documentation for  [request-json (v0.6.2)](https://github.com/mycozycloud/request-json/)  [![npm package](https://img.shields.io/npm/v/npmdoc-request-json.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-request-json) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-request-json.svg)](https://travis-ci.org/npmdoc/node-npmdoc-request-json)
 
 #### HTTP request client for JSON APIs
 
@@ -76,6 +76,7 @@
         "chai": "3.5.0",
         "coffee-script": "1.10.0",
         "coffeelint": "1.15.7",
+        "compression": "1.6.2",
         "connect-multiparty": "2.0.0",
         "express": "4.14.0",
         "lie": "3.1.0",
@@ -83,13 +84,13 @@
     },
     "directories": {},
     "dist": {
-        "shasum": "2e7dfccf3d3d41bfb13130d75fa50fb4781c3a32",
-        "tarball": "https://registry.npmjs.org/request-json/-/request-json-0.6.1.tgz"
+        "shasum": "28c76d05d60c53c9e18d4097cb01723b95069322",
+        "tarball": "https://registry.npmjs.org/request-json/-/request-json-0.6.2.tgz"
     },
     "engines": {
         "node": "*"
     },
-    "gitHead": "52c4e858db0c9fd47152e43f609f6efad03f106b",
+    "gitHead": "2d114d6b0806f80502b6b29398421f9e54fc2a36",
     "homepage": "https://github.com/mycozycloud/request-json/",
     "keywords": [
         "requests",
@@ -104,6 +105,9 @@
     "license": "MIT",
     "main": "./main.js",
     "maintainers": [
+        {
+            "name": "frankrousseau"
+        },
         {
             "name": "mycozycloud"
         }
@@ -120,7 +124,8 @@
         "prepublish": "./node_modules/coffee-script/bin/coffee -cb main.coffee",
         "test": "mocha tests.coffee --reporter spec --compilers coffee:coffee-script/register --colors"
     },
-    "version": "0.6.1"
+    "version": "0.6.2",
+    "bin": {}
 }
 ```
 
